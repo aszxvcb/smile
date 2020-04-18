@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import json
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,11 +21,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+with open(os.path.join(BASE_DIR, 'secrets.json')) as secrets_file:
+    # print(os.path.join(BASE_DIR, 'secrets.json'))
+    secrets = json.load(secrets_file)
+
+def get_secret(setting, secrets=secrets):
+    try:
+        return secrets[setting]
+    except KeyError:
+        raise ImproperlyConfigured("Set the {} setting".format(setting))
+
 # SECURITY WARNING: keep the secret key used in production secret!
-secret_file = os.path.join(BASE_DIR, 'secret.txt')
-# print(secret_file)
-with open(secret_file) as s:
-    SECRET_KEY = s.read().strip()
+# secret_file = os.path.join(BASE_DIR, 'secret.txt')
+# # print(secret_file)
+# with open(secret_file) as s:
+SECRET_KEY = get_secret('SECRET_KEY')
+# print(get_secret('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -78,10 +91,18 @@ WSGI_APPLICATION = 'smile.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'djangomaria',
+        'USER': 'dmuser',
+        'PASSWORD': get_secret('DB_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
+# print(get_secret('DB_PASSWORD'))
 
 
 # Password validation
