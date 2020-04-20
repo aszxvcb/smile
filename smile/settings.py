@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'gallery.apps.GalleryConfig',
 ]
 
 MIDDLEWARE = [
@@ -96,7 +97,7 @@ DATABASES = {
         
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'djangomaria',
-        'USER': 'dmuser',
+        'USER': 'django',
         'PASSWORD': get_secret('DB_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '',
