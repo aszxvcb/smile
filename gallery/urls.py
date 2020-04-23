@@ -3,5 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.gallery, name="gallery"),
+    path('newphoto/', views.photopost, name="newphoto"),
 ] 
 
