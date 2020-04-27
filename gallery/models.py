@@ -3,9 +3,11 @@ from django.utils import timezone
 
 # Create your models here.
 class Photo(models.Model):
-    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    # owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/')
-    created_date = models.DateTimeField(auto_now_add=True)
+    created_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.owner.username + "_" + str(self.created_date)
+        # return self.owner.username + "_" + str(self.created_date)
+        return self.image.name + "_" + str(self.created_date)
+
