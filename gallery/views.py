@@ -3,7 +3,7 @@ from .models import Photo
 
 # Create your views here.
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'home2.html')
 
 def gallery(request):
     photos = Photo.objects
