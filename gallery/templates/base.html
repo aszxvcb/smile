@@ -24,10 +24,15 @@
                 {% if user.is_authenticated %}
                     <div class="col-4 d-flex justify-content-end align-items-center">
                         안녕하세요 {{ user.username }} 님!
-                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'logout' %}">Log out</a>
+                        <a class="btn btn-sm btn-outline-secondary" href="javascript:{document.getElementById('logout').submit()}">Log out</a>
+                        <form id="logout" method="POST" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <input type="hidden"/>
+                        </form>
                     </div>
                 {% else %}
                     <div class="col-4 d-flex justify-content-end align-items-center">
+                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'login'%}">Log in</a>
                         <a class="btn btn-sm btn-outline-secondary" href="{% url 'signup'%}">Sign up</a>
                     </div>
                 {% endif %}
