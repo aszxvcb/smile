@@ -18,7 +18,7 @@ def photopost(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.created_date = timezone.now()
-            # post.user = request.user
+            post.owner = request.user
             post.save()
             return redirect('gallery')
     else :

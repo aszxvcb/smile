@@ -8,11 +8,10 @@
             {% for photo in photos.all %}
                 <div class="col-md-4">
                 <div class="card mb-4 shadow-sm">
-                    {% comment %} <img class="card-img-top" src="{{ photo.image.url }}" alt=" {{ photo.owner }}"> {% endcomment %}
-                    <img class="card-img-top" src="{{ photo.image.url }}" >
+                    <img class="card-img-top" src="{{ photo.image.url }}" alt=" {{ photo.owner }}">
                     <div class="card-body">
-                    <h4>created: {{ photo.created_date }}</h4>
-                    {% comment %} <p class="card-text">{{ photo.owner }}</p> {% endcomment %}
+                    <h6>created: {{ photo.created_date }}</h6>
+                    <p class="card-text">{{ photo.owner }}</p>
                     </div>
                 </div>
                 </div>
