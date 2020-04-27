@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% comment %} 외부에서 socialaccount 기능을 가져와 사용한다 {% endcomment %}
+    {% load socialaccount %} 
+    {% comment %} 로그인 페이지의 기본적 템플릿 등을 가져와 사용 {% endcomment %}
+    {% providers_media_js %}
+
+    {% comment %} <h2>SMILE</h2> {% endcomment %}
+
+    <div class="container" style="width:50%">
+        <a class="btn btn-danger btn-lg btn-block" href="{% url 'login' %}">Smile :) 로그인</a>
+        <br>
+        <a class="btn btn-secondary btn-lg btn-block" href="{% provider_login_url 'google' %}">구글 로그인</a>
+        <br>
+        <a class="btn btn-primary btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">페이스북 로그인</a>
+        <br>
+        <a class="btn btn-success btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">네이버 로그인</a>
+        <br>
+        <a class="btn btn-warning btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">카카오 로그인</a>
+    </div>
+
+{% endblock %}

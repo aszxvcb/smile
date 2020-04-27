@@ -49,12 +49,21 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gallery.apps.GalleryConfig',
     'accounts.apps.AccountsConfig',
+
+    #allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    #google social login
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +161,12 @@ MEDIA_URL = '/media/'
 LOGIN_URL = '/accounts/login/'
 
 AUTH_USER_MODEL = 'auth.User'
+
+
+#social login settings By zwon_lala
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'

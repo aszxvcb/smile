@@ -44,3 +44,7 @@ def logout(request):
         auth.logout(request)
         return redirect('home')
     return render(request, 'signup.html')
+
+
+def choose(request):
+    return render(request, 'choose_login.html')

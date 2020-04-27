@@ -24,6 +24,7 @@ urlpatterns = [
     path('', gallery.views.home, name="home"),
     path('gallery/', include('gallery.urls')),
     path('accounts/', include('accounts.urls')),
+    path('accounts/', include('allauth.urls')),
 ] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
