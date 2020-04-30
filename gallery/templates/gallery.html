@@ -7,13 +7,17 @@
             <div class="row">
             {% for photo in photos.all %}
                 <div class="col-md-4">
-                <div class="card mb-4 shadow-sm">
-                    <img class="card-img-top" src="{{ photo.image.url }}" alt=" {{ photo.owner }}">
-                    <div class="card-body">
-                    <h6>created: {{ photo.created_date }}</h6>
-                    <p class="card-text">{{ photo.owner }}</p>
+                    <div class="card mb-4 shadow-sm">
+                        <img class="card-img-top" src="{{ photo.image.url }}" alt=" {{ photo.owner.username }}">
+                        <div class="card-body">
+                            <h6>created: {{ photo.created_date }}</h6>
+                            <p class="card-text"> {{ photo.owner.username }}</p>
+                            <p class="card-text"> {{ photo.image.url }}</p>
+                            <p class="card-text"> instance : {{ photo.image.instance }}</p>
+                            <p class="card-text"> {{ photo.image.name }}</p>
+
+                        </div>
                     </div>
-                </div>
                 </div>
             {% endfor %}
             </div>
