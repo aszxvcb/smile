@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Photo
-from .forms import PhotoPost
+from .forms import PhotoPost, SelfiePost
 from django.utils import timezone
 
 # Create your views here.
@@ -24,3 +24,15 @@ def photopost(request):
     else :
         form = PhotoPost()
         return render(request, 'new.html', {"form": form})
+
+def selfiepost(request):
+    if request.method == "POST":
+        form = SelfiePost(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.owner = request.user
+            post.save()
+            return redirect('gallery')
+    else :
+        form = SelfiePost()
+        return render(request, 'new.html', {"form": form })
