@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import json
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.messages import constants as messages_constants
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -170,3 +171,15 @@ AUTHENTICATION_BACKENDS = (
 )
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
+
+
+#message settings by zwon_lala
+MESSAGE_LEVEL = messages_constants.DEBUG
+
+MESSAGE_TAGS = {
+    # messages.DEBUG: 'alert-info',
+    # messages.INFO: 'alert-info',
+    # messages.SUCCESS: 'alert-success',
+    # messages.WARNING: 'alert-warning',
+    messages_constants.ERROR: 'danger',
+}

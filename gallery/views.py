@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect
 from .models import Photo
 from .forms import PhotoPost, SelfiePost
 from django.utils import timezone
+from django.contrib import messages
 
 # Create your views here.
 def home(request):
+    messages.info(request, "home 화면입니다")
     return render(request, 'home2.html')
 
 def gallery(request):
@@ -20,6 +22,7 @@ def photopost(request):
             post.created_date = timezone.now()
             post.owner = request.user
             post.save()
+            messages.info(request, "저장 성공!")
             return redirect('gallery')
     else :
         form = PhotoPost()
