@@ -23,3 +23,14 @@ class Photo(models.Model):
     def __str__(self):
         return self.owner.username + "_" + str(self.created_date)
     #     # return self.image.name + "_" + str(self.created_date)
+
+
+class Selfie(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=unique_file_name)
+    created_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        current_time = self.created_date.today()
+        time_info  = current_time.strftime('%y%m%d%H%M%S')
+        return "Selfie_" + self.owner.usernmae + "_" + time_info
