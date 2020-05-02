@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %} 
+
+    <div class="album py-5 bg-light">
+        <div class="container" style="background-color:red">
+            <h3>{{user.username}}의 selife 입니다</h3>
+            <h3>여기에 아래의 selfie들과 비교되어 검출된 사진이 뜹니다.</h3>
+            <div class="row">
+            {% for selfie in userselfies %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <img class="card-img-top" src="{{ selfie.image.url }}" alt=" {{ selfie.owner.username }}">
+                        <div class="card-body">
+                            <h6>created: {{ selfie.created_date }}</h6>
+                            <p class="card-text"> {{ selfie.owner.username }}</p>
+                            <p class="card-text"> {{ selfie.image.url }}</p>
+                            <p class="card-text"> instance : {{ selfie.image.instance }}</p>
+                            <p class="card-text"> {{ selfie.image.name }}</p>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
