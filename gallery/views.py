@@ -4,6 +4,8 @@ from .forms import PhotoPost, SelfiePost
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import get_user
+from faceApp.connect import connectionTest as connect
+from faceApp.face_recognition_cli import *
 
 # Create your views here.
 def home(request):
@@ -30,6 +32,12 @@ def photopost(request):
             post.owner = request.user
             post.save()
             messages.info(request, "저장 성공!")
+
+            # faceApp
+            # upload_unknown_file(post.image, post.owner, 0);
+            upload_unknown_file("/Users/isanghyeon/Documents/4학년/comtimes/smile/media/images/dong_200514130620.jpeg", post.owner, 0);
+            messages.info(request, "인코딩 성공!");
+
             return redirect('gallery')
     else :
         form = PhotoPost()

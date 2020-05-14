@@ -17,6 +17,7 @@ def unique_file_name(instance, filename):
         return 'images/{0}/{1}_{2}{3}'.format(user_name, root_ext[0], time_info, root_ext[1])
 
 
+
 class Photo(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to= unique_file_name)
@@ -35,3 +36,4 @@ class Selfie(models.Model):
         current_time = self.created_date
         time_info  = current_time.strftime('%y%m%d%H%M%S')
         return "selfie_" + self.owner.username + "_" + time_info
+
