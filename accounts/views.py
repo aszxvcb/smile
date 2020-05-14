@@ -11,9 +11,9 @@ def signup(request):
                 return render(request, 'signup.html', {'error': "이미 사용된 username입니다"})
             except User.DoesNotExist:
                 user = User.objects.create_user(
-                    request.POST['username'], 
-                    password=request.POST['password1'])
-                auth.login(request, user)
+                    username = request.POST['username'], 
+                    password = request.POST['password1'])
+                auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 return redirect('home')
         else :
             return render(request, 'signup.html' , {'error': "password가 일치하지 않습니다"})
