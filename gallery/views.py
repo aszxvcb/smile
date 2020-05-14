@@ -36,6 +36,12 @@ def photopost(request):
         return render(request, 'new.html', {"form": form})
 
 def selfiepost(request):
+    curUser = get_user(request)
+    # print(curUser)
+    if curUser.is_anonymous:
+        messages.warning(request, "셀카를 업로드하시기 전에 로그인해주세요!")
+        return redirect('home')
+
     if request.method == "POST":
         form = SelfiePost(request.POST, request.FILES)
         if form.is_valid():
