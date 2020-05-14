@@ -15,6 +15,12 @@ def gallery(request):
     return render(request, 'gallery.html', {"photos": photos})
 
 def photopost(request):
+    curUser = get_user(request)
+    # print(curUser)
+    if curUser.is_anonymous:
+        messages.warning(request, "사진을 업로드하시기 전에 로그인해주세요!")
+        return redirect('home')
+
     if request.method == 'POST':
         form = PhotoPost(request.POST, request.FILES)
         # print(form.is_valid())
