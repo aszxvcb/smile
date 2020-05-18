@@ -3,6 +3,12 @@ ngrok
 # Created by https://www.gitignore.io/api/django
 # Edit at https://www.gitignore.io/?templates=django
 
+### encoding file ###
+unknown_encodings_save.json
+
+### pycharm ###
+.idea/
+
 ### Django ###
 *.log
 *.pot
