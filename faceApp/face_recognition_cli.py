@@ -13,31 +13,11 @@ import numpy as np
 import json
 from collections import OrderedDict
 
-def scan_known_people(known_people_folder): # 아는 사람의 얼굴과 이름을 배열에 append
-    known_names = []
-    known_face_encodings = []
+def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열에 저장
 
-    for file in image_files_in_folder(known_people_folder):
-        basename = os.path.splitext(os.path.basename(file))[0] #경로 중 파일 명만 얻어옴
-        img = face_recognition.load_image_file(file)
-        encodings = face_recognition.face_encodings(img) #
+    upload_name = upload_file;
 
-        if len(encodings) > 1:
-            click.echo("WARNING: More than one face found in {}. Only considering the first face.".format(file))
-            known_names.append(basename)
-            known_face_encodings.append(encodings[0])
-        if len(encodings) == 0:
-            click.echo("WARNING: No faces found in {}. Ignoring file.".format(file))
-        else:
-            known_names.append(basename)
-            known_face_encodings.append(encodings[0]) #배열에 넣어주어 리턴
-
-    print(encodings[0])
-    return known_names, known_face_encodings
-
-def upload_unknown_file(upload_file, upload_name, flag): #업로드된 파일들 검사 후 배열에 저장
-
-    print("[check] selfie_upload_file : {}".format(upload_file));
+    print("[check] upload_unknown_file : {}".format(upload_file));
 
     upload_image = face_recognition.load_image_file(upload_file)
 
@@ -47,21 +27,32 @@ def upload_unknown_file(upload_file, upload_name, flag): #업로드된 파일들
         upload_image = np.array(pil_img)
 
     upload_encodings = face_recognition.face_encodings(upload_image)
+    #TODO. upload_encodings 실패시 예외처리 추가 , jpeg의 경우 인코딩이 안되는 경우 종종 발생
 
     print("[check] upload_encodings " , upload_encodings);
 
+    # 확인 후 삭제
+    # if(not os.path.isdir("./media/images")): #처음 실행될 때
+    #     upload_data = {}
+    #     upload_data["unknowns"] = []
+    # else:
+    #     with open("unknown_encodings_save.json", "r") as f:
+    #         upload_data = json.load(f)
 
-    if(flag==0): #처음 실행될 때
-        upload_data = {}
-        upload_data["unknowns"] = []
+    if (not os.path.isfile("./media/unknown/unknown_encodings_save.json")):
+        upload_data = {};
+        upload_data["unknowns"] = [];
     else:
         with open("unknown_encodings_save.json", "r") as f:
-            upload_data = json.load(f)
+            upload_data = json.load(f);
 
+    upload_encodings = np.array(upload_encodings)
 
-    upload_data["unknowns"].append({"name":upload_name, "encodings":upload_encodings.tolist()})
-    with open("unknown_encodings_save.json", "w", encoding="utf=8") as json_file:
+    upload_data["unknowns"].append({"name":upload_name.name, "encodings":upload_encodings.tolist()})
+    with open("./media/unknown/unknown_encodings_save.json", "w", encoding="utf=8") as json_file:
         json.dump(upload_data, json_file, ensure_ascii=False, indent="\t")
+
+    print("encoding file save complete!")
 
 
 def print_result(filename, name, distance, show_distance=False):
@@ -123,40 +114,6 @@ def compare_image(image_to_check, known_names, known_face_encodings, tolerance=0
                     continue
 
     return user_faces
-
-    """
-    if not unknown_encodings.any():
-        # print out fact that no faces were found in image
-        print_result(image_to_check, "no_persons_found", None, show_distance)
-    """
-
-"""
-    n=len(unknown_encodings)
-
-    if not unknown_encodings.any():
-        # print out fact that no faces were found in image
-        print_result(image_to_check, "no_persons_found", None, show_distance)
-
-    if n!=128: # 사진 한명 이상일 경우.....
-        for unknown_encoding in unknown_encodings:
-            distances = face_recognition.face_distance(known_face_encodings, unknown_encoding)
-            result = list(distances <= tolerance)
-
-            if True in result:
-                user_faces.append(unknown_name)
-                [print_result(image_to_check, name, distance, show_distance) for is_match, name, distance in zip(result, known_names, distances) if is_match]
-            else:
-                print_result(image_to_check, "unknown_person", None, show_distance)
-    else:
-        distances = face_recognition.face_distance(known_face_encodings, unknown_encodings)
-        result = list(distances <= tolerance)
-
-
-        if True in result:
-            [print_result(image_to_check, name, distance, show_distance) for is_match, name, distance in zip(result, known_names, distances) if is_match]
-        else:
-            print_result(image_to_check, "unknown_person", None, show_distance)
-"""
 
 
 def image_files_in_folder(folder): # pwd 효과

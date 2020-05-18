@@ -35,7 +35,8 @@ def photopost(request):
 
             # faceApp
             # upload_unknown_file(post.image, post.owner, 0);
-            upload_unknown_file("/Users/isanghyeon/Documents/4학년/comtimes/smile/media/images/dong_200514130620.jpeg", post.owner, 0);
+            # upload_unknown_file("image 파일 경로");
+            upload_unknown_file(post.image.file);
             messages.info(request, "인코딩 성공!");
 
             return redirect('gallery')
@@ -57,6 +58,13 @@ def selfiepost(request):
             post.owner = request.user
             post.save()
             return redirect('gallery')
+
+            # faceApp
+            # upload_unknown_file(post.image, post.owner, 0);
+            # upload_unknown_file("image 파일 경로");
+            upload_unknown_file(post.image.file);
+            messages.info(request, "셀피 업로드 성공!");
+
     else :
         form = SelfiePost()
         return render(request, 'new.html', {"form": form })
