@@ -78,35 +78,34 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
     upload_name=user_id
 
     # TODO. 사진들 속에서 유저의 얼굴이 나온 사진을 검출
-    file_path="./media/known/" + upload_name + "/known_encodings_save.json"
+    file_path="./media/known/" + upload_name.username + "/known_encodings_save.json"
 
     if (not os.path.isfile(file_path)):
         upload_data = {};
         upload_data["unknowns"] = [];
     else:
-        with open("known_encodings_save.json", "r") as f:
+        with open(file_path, "r") as f:
             upload_data = json.load(f);
 
     # numpy 를 array 로 변환
     upload_encodings = np.array(user_encodings)
 
-    upload_data["unknowns"].append({"name":upload_name.name, "encodings":upload_encodings.tolist()})
+    upload_data["unknowns"].append({"name":upload_name.username, "encodings":upload_encodings.tolist()})
     # python 'with'는 파일을 다룰 때 사용
     # 파일을 오픈하고 json_file 로 alias, .dump() 은 json을 해당 파일포인터로 파싱
     with open(file_path, "w", encoding="utf=8") as json_file:
         json.dump(upload_data, json_file, ensure_ascii=False, indent="\t")
 
     # 사진들을 비교해서 검출된 사진을 userID 디렉토리에 사진 이름을 파일로 저장
-    compare_image(img, user_id, user_encodings, 0.3, False)
+    #compare_image(img, user_id, user_encodings, 0.3, False)
 
 
 def compare_image(image_to_check, known_names, known_face_encodings, tolerance=0.6, show_distance=False):
     # 유저의 얼굴이 포함된 사진 이름 리스트
     user_faces = []
 
-    with open("unknown_encodings_save.json", "r") as json_file:
+    with open("./media/unknown/unknown_encodings_save.json", "r") as json_file:
         json_data = json.load(json_file)
-
 
     for unknown in json_data['unknowns']:
         unknown_encodings = np.array(unknown['encodings'])
