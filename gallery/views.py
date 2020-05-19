@@ -16,34 +16,42 @@ def gallery(request):
     photos = Photo.objects
     return render(request, 'gallery.html', {"photos": photos})
 
+#NOTE. 사진 전송 시 동작하는 함수
 def photopost(request):
     curUser = get_user(request)
     # print(curUser)
+    # 로그인이 되지 않은 경우
     if curUser.is_anonymous:
         messages.warning(request, "사진을 업로드하시기 전에 로그인해주세요!")
         return redirect('home')
 
+    # 사진 전송 버튼 클릭 시 동작하는 부분
     if request.method == 'POST':
         form = PhotoPost(request.POST, request.FILES)
         # print(form.is_valid())
+        # 사진 업로드 구현부
         if form.is_valid():
             post = form.save(commit=False)
             post.created_date = timezone.now()
             post.owner = request.user
             post.save()
+            #NOTE. save() 처리 과정 중 model.py/unique_file_name() 실행
             messages.info(request, "저장 성공!")
 
-            # faceApp
-            # upload_unknown_file(post.image, post.owner, 0);
-            # upload_unknown_file("image 파일 경로");
+            #NOTE. faceApp 구현 부
+            # (기존)upload_unknown_file(post.image, post.owner, 0);
+            # @params: 업로드 된 사진의 경로를 전달
+            # faceApp/face_recognition_cli 로 제어 이동
             upload_unknown_file(post.image.file);
             messages.info(request, "인코딩 성공!");
 
             return redirect('gallery')
+    # 일반 요청시
     else :
         form = PhotoPost()
         return render(request, 'new.html', {"form": form})
 
+#NOTE. 셀피 업로드 시 동작하는 함수
 def selfiepost(request):
     curUser = get_user(request)
     # print(curUser)
@@ -62,6 +70,7 @@ def selfiepost(request):
             # faceApp
             # upload_unknown_file(post.image, post.owner, 0);
             # upload_unknown_file("image 파일 경로");
+            #TODO. photoPost와 같은 로직으로 동작, 경로는 ID로 지정
             upload_unknown_file(post.image.file);
             messages.info(request, "셀피 업로드 성공!");
 
@@ -69,9 +78,11 @@ def selfiepost(request):
         form = SelfiePost()
         return render(request, 'new.html', {"form": form })
 
+#NOTE. 사진 검출 시 동작하는 함수
 def detectphoto(request):
     curUser = get_user(request)
     # print(curUser)
+    # 로그인이 되지 않은 경우
     if curUser.is_anonymous:
         messages.warning(request, "사진을 검출하시기 전에 로그인해주세요!")
         return redirect('home')
@@ -85,6 +96,8 @@ def detectphoto(request):
         if userSelfies.count() < 1:
             messages.warning(request, "사진을 검출하려면 최소 한개 이상의 selfie를 등록해주셔야 합니다!")
             return redirect('home')
-            
+
+        #TODO. 사진 검출 함수 호출
+
         return render(request, 'selfie_gallery.html', {"usernamne":curUser.username,"userselfies":userSelfies})
     return redirect('gallery')

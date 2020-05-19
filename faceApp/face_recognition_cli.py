@@ -27,11 +27,11 @@ def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열�
         upload_image = np.array(pil_img)
 
     upload_encodings = face_recognition.face_encodings(upload_image)
-    #TODO. upload_encodings 실패시 예외처리 추가 , jpeg의 경우 인코딩이 안되는 경우 종종 발생
+    #TODO. upload_encodings 실패시 예외처리 추가 , jpeg의 경우 인코딩이 안되는 경우 종종 발생. 확인 필요
 
     print("[check] upload_encodings " , upload_encodings);
 
-    # 확인 후 삭제
+    # (기존)
     # if(not os.path.isdir("./media/images")): #처음 실행될 때
     #     upload_data = {}
     #     upload_data["unknowns"] = []
@@ -39,6 +39,9 @@ def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열�
     #     with open("unknown_encodings_save.json", "r") as f:
     #         upload_data = json.load(f)
 
+    # NOTE. (수정)
+    # 기존 - 첫 인코딩을 flag 파라미터를 받아서 판단.
+    # 수정 - 인코딩 파일 존재여부로 판단, json 저장위치 변경
     if (not os.path.isfile("./media/unknown/unknown_encodings_save.json")):
         upload_data = {};
         upload_data["unknowns"] = [];
@@ -46,9 +49,12 @@ def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열�
         with open("unknown_encodings_save.json", "r") as f:
             upload_data = json.load(f);
 
+    # numpy 를 array 로 변환
     upload_encodings = np.array(upload_encodings)
 
     upload_data["unknowns"].append({"name":upload_name.name, "encodings":upload_encodings.tolist()})
+    # python 'with'는 파일을 다룰 때 사용
+    # 파일을 오픈하고 json_file 로 alias, .dump() 은 json을 해당 파일포인터로 파싱
     with open("./media/unknown/unknown_encodings_save.json", "w", encoding="utf=8") as json_file:
         json.dump(upload_data, json_file, ensure_ascii=False, indent="\t")
 
@@ -77,7 +83,8 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
 
     # user_id path 처리
 
-    # 사진들 속에서 유저의 얼굴이 나온 사진을 검출
+    # TODO. 사진들 속에서 유저의 얼굴이 나온 사진을 검출
+    # 사진들을 비교해서 검출된 사진을 userID 디렉토리에 사진 이름을 파일로 저장
     compare_image(img, user_id, user_encodings, 0.3, False)
 
 
