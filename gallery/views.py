@@ -71,7 +71,7 @@ def selfiepost(request):
             # upload_unknown_file(post.image, post.owner, 0);
             # upload_unknown_file("image 파일 경로");
             #TODO. photoPost와 같은 로직으로 동작, 경로는 ID로 지정
-            selfie_upload_btn(post.image.file, "1234");
+            selfie_upload_btn(post.image.file, post.owner);
             messages.info(request, "셀피 업로드 성공!");
 
     else :
@@ -98,6 +98,7 @@ def detectphoto(request):
             return redirect('home')
 
         #TODO. 사진 검출 함수 호출
+        # compare_image(curUserId)
 
         return render(request, 'selfie_gallery.html', {"usernamne":curUser.username,"userselfies":userSelfies})
     return redirect('gallery')
