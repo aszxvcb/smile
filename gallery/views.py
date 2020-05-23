@@ -69,12 +69,12 @@ def selfiepost(request):
             curUserId = curUser.id
             selfies = Selfie.objects.all()
             userSelfies = selfies.filter(owner_id=curUserId)
-            return render(request, 'selfie_gallery.html', {"usernamne": curUser.username, "userselfies": userSelfies})
 
             # faceApp
             selfie_upload_btn(post.image.file, post.owner);
             messages.info(request, "셀피 업로드 성공!");
 
+            return render(request, 'selfie_gallery.html', {"usernamne": curUser.username, "userselfies": userSelfies})
     else :
         form = SelfiePost()
         return render(request, 'new.html', {"form": form })
@@ -98,8 +98,16 @@ def detectphoto(request):
             messages.warning(request, "사진을 검출하려면 최소 한개 이상의 selfie를 등록해주셔야 합니다!")
             return redirect('home')
 
-        #TODO. 사진 검출 함수 호출
-        # compare_image(curUserId)
+        #TODO. 사진 검출 함수 호출, faceApp 결과 파일명 받아서 화면에 띄워주기
+        file_path="./media/known/" + curUser.username + "/known_encodings_save.json"
+        with open(file_path, "r") as json_file:
+            json_data = json.load(json_file)
+            print(type(json_data['unknowns']))
+            print(type(json_data['unknowns'][0]))
+            known_encodings = np.array(json_data['unknowns'][0]['encodings'])
 
-        return render(request, 'selfie_gallery.html', {"usernamne":curUser.username,"userselfies":userSelfies})
+        result_arr = compare_image(image_to_check=None, known_names=None, known_face_encodings=known_encodings)
+        #TODO. 추출된 사진 띄우기
+
+        return render(request, 'selfie_gallery.html', {"username":curUser.username,"userselfies":userSelfies})
     return redirect('gallery')
