@@ -16,33 +16,43 @@ def gallery(request):
     photos = Photo.objects
     return render(request, 'gallery.html', {"photos": photos})
 
+#NOTE. 사진 전송 시 동작하는 함수
 def photopost(request):
     curUser = get_user(request)
     # print(curUser)
+    # 로그인이 되지 않은 경우
     if curUser.is_anonymous:
         messages.warning(request, "사진을 업로드하시기 전에 로그인해주세요!")
         return redirect('home')
 
+    # 사진 전송 버튼 클릭 시 동작하는 부분
     if request.method == 'POST':
         form = PhotoPost(request.POST, request.FILES)
         # print(form.is_valid())
+        # 사진 업로드 구현부
         if form.is_valid():
             post = form.save(commit=False)
             post.created_date = timezone.now()
             post.owner = request.user
             post.save()
+            #NOTE. save() 처리 과정 중 model.py/unique_file_name() 실행
             messages.info(request, "저장 성공!")
 
-            # faceApp
-            # upload_unknown_file(post.image, post.owner, 0);
-            # upload_unknown_file("/Users/isanghyeon/Documents/4학년/comtimes/smile/media/images/dong_200514130620.jpeg", post.owner, 0);
+            #NOTE. faceApp 구현 부
+            # (기존)upload_unknown_file(post.image, post.owner, 0);
+            # @params: 업로드 된 사진의 경로를 전달
+            # faceApp/face_recognition_cli 로 제어 이동
+            upload_unknown_file(post.image.file);
+
             messages.info(request, "인코딩 성공!");
 
             return redirect('gallery')
+    # 일반 요청시
     else :
         form = PhotoPost()
         return render(request, 'new.html', {"form": form})
 
+#NOTE. 셀피 업로드 시 동작하는 함수
 def selfiepost(request):
     curUser = get_user(request)
     # print(curUser)
@@ -56,19 +66,24 @@ def selfiepost(request):
             post = form.save(commit=False)
             post.owner = request.user
             post.save()
-            
             curUserId = curUser.id
             selfies = Selfie.objects.all()
-            userSelfies = selfies.filter(owner_id=curUserId)       
-            return render(request, 'selfie_gallery.html', {"usernamne":curUser.username,"userselfies":userSelfies})
+            userSelfies = selfies.filter(owner_id=curUserId)
 
+            # faceApp
+            selfie_upload_btn(post.image.file, post.owner);
+            messages.info(request, "셀피 업로드 성공!");
+
+            return render(request, 'selfie_gallery.html', {"usernamne": curUser.username, "userselfies": userSelfies})
     else :
         form = SelfiePost()
         return render(request, 'new.html', {"form": form })
 
+#NOTE. 사진 검출 시 동작하는 함수
 def detectphoto(request):
     curUser = get_user(request)
     # print(curUser)
+    # 로그인이 되지 않은 경우
     if curUser.is_anonymous:
         messages.warning(request, "사진을 검출하시기 전에 로그인해주세요!")
         return redirect('home')
@@ -82,6 +97,17 @@ def detectphoto(request):
         if userSelfies.count() < 1:
             messages.warning(request, "사진을 검출하려면 최소 한개 이상의 selfie를 등록해주셔야 합니다!")
             return redirect('home')
-            
-        return render(request, 'selfie_gallery.html', {"usernamne":curUser.username,"userselfies":userSelfies})
+
+        #TODO. 사진 검출 함수 호출, faceApp 결과 파일명 받아서 화면에 띄워주기
+        file_path="./media/known/" + curUser.username + "/known_encodings_save.json"
+        with open(file_path, "r") as json_file:
+            json_data = json.load(json_file)
+            print(type(json_data['unknowns']))
+            print(type(json_data['unknowns'][0]))
+            known_encodings = np.array(json_data['unknowns'][0]['encodings'])
+
+        result_arr = compare_image(image_to_check=None, known_names=None, known_face_encodings=known_encodings)
+        #TODO. 추출된 사진 띄우기
+
+        return render(request, 'selfie_gallery.html', {"username":curUser.username,"userselfies":userSelfies})
     return redirect('gallery')
