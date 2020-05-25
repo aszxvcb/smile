@@ -70,12 +70,12 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
     # TODO. 사진들 속에서 유저의 얼굴이 나온 사진을 검출
     file_path="./media/known/" + user_id.username + "/known_encodings_save.json"
 
-    if (not os.path.isfile(file_path)):
-        upload_data = {};
-        upload_data["unknowns"] = [];
-    else:
-        with open(file_path, "r") as f:
-            upload_data = json.load(f);
+    # selfie 인코딩 파일은 사진 하나에 대해서만 존재해야함. 기존 인코딩이 존재하면 삭제
+    if (os.path.isfile(file_path)):
+        os.remove(file_path)
+
+    upload_data = {};
+    upload_data["unknowns"] = [];
 
     # numpy 를 array 로 변환
     upload_encodings = np.array(user_encodings)
@@ -85,11 +85,6 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
     # 파일을 오픈하고 json_file 로 alias, .dump() 은 json을 해당 파일포인터로 파싱
     with open(file_path, "w", encoding="utf=8") as json_file:
         json.dump(upload_data, json_file, ensure_ascii=False, indent="\t")
-
-    # 사진들을 비교해서 검출된 사진을 userID 디렉토리에 사진 이름을 파일로 저장
-    #TODO compare_image 결과 전달
-    compare_image(img, user_id, user_encodings, 0.3, False)
-
 
 def compare_image(image_to_check, known_names, known_face_encodings, tolerance=0.3, show_distance=False):
     # 유저의 얼굴이 포함된 사진 이름 리스트
