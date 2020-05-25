@@ -98,7 +98,7 @@ def detectphoto(request):
             messages.warning(request, "사진을 검출하려면 최소 한개 이상의 selfie를 등록해주셔야 합니다!")
             return redirect('home')
 
-        #TODO. 사진 검출 함수 호출, faceApp 결과 파일명 받아서 화면에 띄워주기
+        #사진 검출 함수 호출, faceApp 결과 파일명 받아서 화면에 띄워주기
         file_path="./media/known/" + curUser.username + "/known_encodings_save.json"
         with open(file_path, "r") as json_file:
             json_data = json.load(json_file)
@@ -107,7 +107,15 @@ def detectphoto(request):
             known_encodings = np.array(json_data['unknowns'][0]['encodings'])
 
         result_arr = compare_image(image_to_check=None, known_names=None, known_face_encodings=known_encodings)
-        #TODO. 추출된 사진 띄우기
 
-        return render(request, 'selfie_gallery.html', {"username":curUser.username,"userselfies":userSelfies})
+        photos = Photo.objects.filter(image='') #empty queryset
+        for result in result_arr:
+            filename = result.split("/unknown")
+
+            #TODO. 추출된 사진 띄우기
+            photo = Photo.objects.all()
+            photo = photo.filter(image="unknown"+filename[-1]);
+            photos = photos.union(photo)
+
+        return render(request, 'selfie_gallery.html', {"username":curUser.username,"photos":photos})
     return redirect('gallery')
