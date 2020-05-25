@@ -61,6 +61,12 @@ def selfiepost(request):
         return redirect('home')
 
     if request.method == "POST":
+        check = Selfie.objects.filter(owner = curUser)
+        if( check.count() != 0 ):
+            # 사용자 계정으로 등록된 셀피 삭제. 셀피는 하나만 존재
+            print("이미 selfie가 등록되어 있습니다.")
+            check.delete()
+
         form = SelfiePost(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
@@ -72,9 +78,10 @@ def selfiepost(request):
 
             # faceApp
             selfie_upload_btn(post.image.file, post.owner);
-            messages.info(request, "셀피 업로드 성공!");
+            messages.info(request, "셀피 업로드 성공!")
 
-            return render(request, 'selfie_gallery.html', {"usernamne": curUser.username, "userselfies": userSelfies})
+            # 사진 검출 함수 호출, faceApp 결과 파일명 받아서 화면에 띄워주기
+            return redirect('detectphoto')
     else :
         form = SelfiePost()
         return render(request, 'new.html', {"form": form })
@@ -112,7 +119,7 @@ def detectphoto(request):
         for result in result_arr:
             filename = result.split("/unknown")
 
-            #TODO. 추출된 사진 띄우기
+            # 추출된 사진 띄우기
             photo = Photo.objects.all()
             photo = photo.filter(image="unknown"+filename[-1]);
             photos = photos.union(photo)
