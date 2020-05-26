@@ -27,6 +27,12 @@ def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열�
         upload_image = np.array(pil_img)
 
     upload_encodings = face_recognition.face_encodings(upload_image)
+
+
+    if len(upload_encodings) == 0:
+        click.echo("WARNING: No faces found in {}. Ignoring file.".format(upload_file))
+        #TODO. 얼굴 발견되지 않을 시 에러 프론트로 전달
+
     #TODO. upload_encodings 실패시 예외처리 추가 , jpeg의 경우 인코딩이 안되는 경우 종종 발생. 확인 필요
 
     print("[check] upload_encodings " , upload_encodings);
@@ -57,7 +63,11 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
     # 유저의 셀피를 분석
     img = face_recognition.load_image_file(selfie_file)
 
-    #Check. 인코딩이 왜 오래걸리지?
+    if (max(img.shape) > 1600):
+        pil_img = PIL.Image.fromarray(img)
+        pil_img.thumbnail((1600, 1600), PIL.Image.LANCZOS)  # 크기 줄임
+        img = np.array(pil_img)
+
     user_encodings = face_recognition.face_encodings(img)
 
     if len(user_encodings) > 1:
@@ -95,20 +105,17 @@ def compare_image(image_to_check, known_names, known_face_encodings, tolerance=0
 
     for unknown in json_data['unknowns']:
         unknown_encodings = np.array(unknown['encodings'])
-        number_of_people = unknown_encodings.ndim # 한 명인지 한 명 이상인지만 판단
+        number_of_people = unknown_encodings.shape[0] # 유저가 사진에 몇명이 나왔는 지 여부 확인
 
         if(number_of_people==1): # 사진 속 사람이 한 명일 경우
             distances = face_recognition.face_distance(known_face_encodings, unknown_encodings)
             result = list(distances <= tolerance)
+            print(unknown['name'], " : ", distances);
 
             if True in result:
                 user_faces.append(unknown['name'])
 
         else: # 사진 속에 2명 이상의 사람이 있을 경우
-            number_of_people = unknown_encodings.shape[0] # 몇 명인지 정확하게
-            # 유저가 사진에 몇명이 나왔는 지 여부 확인
-
-
             for unknown_encoding in unknown_encodings:
                 distances = face_recognition.face_distance(known_face_encodings, unknown_encoding)
                 result = list(distances <= tolerance)
@@ -116,6 +123,7 @@ def compare_image(image_to_check, known_names, known_face_encodings, tolerance=0
                 if True in result:
                     user_faces.append(unknown['name'])
                     continue
+
     print(user_faces);
     return user_faces
 
