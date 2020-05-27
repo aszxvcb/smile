@@ -103,11 +103,10 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
         click.echo("WARNING: More than one face found in {}. Only considering the first face.".format(selfie_file))
         #TODO. 얼굴이 두개 이상 발견 시 에러 프론트로 전달
     if len(user_encodings) == 0:
-        upload_encodings = rotation_photo(selfie_file)
-        if len(upload_encodings) == 0:
+        user_encodings = rotation_photo(selfie_file)
+        if len(user_encodings) == 0:
             click.echo("WARNING: No faces found in {}. Ignoring file.".format(selfie_file))
         #TODO. 얼굴 발견되지 않을 시 에러 프론트로 전달
-
 
     file_path="./media/known/" + user_id.username + "/known_encodings_save.json"
 
