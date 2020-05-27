@@ -10,8 +10,38 @@ import sys
 import PIL.Image
 import numpy as np
 
+from PIL import Image, ExifTags
+
 import json
 from collections import OrderedDict
+def rotation_photo(background_image):
+    try:
+        image = Image.open(background_image.name)
+        for orientation in ExifTags.TAGS.keys():
+            if ExifTags.TAGS[orientation] == 'Orientation':
+                break
+        exif = dict(image._getexif().items())
+
+        if exif[orientation] == 3:
+            image = image.rotate(180, expand=True)
+        elif exif[orientation] == 6:
+            image = image.rotate(270, expand=True)
+        elif exif[orientation] == 8:
+            image = image.rotate(90, expand=True)
+    except (AttributeError, KeyError, IndexError):
+        pass
+
+    image = image.convert('RGB')
+    upload_image = np.array(image)
+
+    if (max(upload_image.shape) > 1600):
+        pil_img = PIL.Image.fromarray(upload_image)
+        pil_img.thumbnail((1600, 1600), PIL.Image.LANCZOS)  # 크기 줄임
+        upload_image = np.array(pil_img)
+
+    encodings = face_recognition.face_encodings(upload_image)
+
+    return encodings
 
 def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열에 저장
 
@@ -28,12 +58,11 @@ def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열�
 
     upload_encodings = face_recognition.face_encodings(upload_image)
 
-
     if len(upload_encodings) == 0:
-        click.echo("WARNING: No faces found in {}. Ignoring file.".format(upload_file))
-        #TODO. 얼굴 발견되지 않을 시 에러 프론트로 전달
-
-    #TODO. upload_encodings 실패시 예외처리 추가 , jpeg의 경우 인코딩이 안되는 경우 종종 발생. 확인 필요
+        upload_encodings = rotation_photo(upload_file)
+        if len(upload_encodings) == 0:
+            click.echo("WARNING: No faces found in {}. Ignoring file.".format(upload_file))
+            #TODO. 얼굴 발견되지 않을 시 에러 프론트로 전달
 
     print("[check] upload_encodings " , upload_encodings);
 
@@ -74,10 +103,12 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
         click.echo("WARNING: More than one face found in {}. Only considering the first face.".format(selfie_file))
         #TODO. 얼굴이 두개 이상 발견 시 에러 프론트로 전달
     if len(user_encodings) == 0:
-        click.echo("WARNING: No faces found in {}. Ignoring file.".format(selfie_file))
+        upload_encodings = rotation_photo(selfie_file)
+        if len(upload_encodings) == 0:
+            click.echo("WARNING: No faces found in {}. Ignoring file.".format(selfie_file))
         #TODO. 얼굴 발견되지 않을 시 에러 프론트로 전달
 
-    # TODO. 사진들 속에서 유저의 얼굴이 나온 사진을 검출
+
     file_path="./media/known/" + user_id.username + "/known_encodings_save.json"
 
     # selfie 인코딩 파일은 사진 하나에 대해서만 존재해야함. 기존 인코딩이 존재하면 삭제

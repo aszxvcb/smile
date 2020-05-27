@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.contrib.auth import get_user
 from faceApp.connect import connectionTest as connect
 from faceApp.face_recognition_cli import *
-
 from itertools import chain
 
 # Create your views here.
@@ -115,7 +114,7 @@ def detectphoto(request):
             print(type(json_data['unknowns'][0]))
             known_encodings = np.array(json_data['unknowns'][0]['encodings'])
 
-        result_arr = compare_image(image_to_check=None, known_names=None, known_face_encodings=known_encodings, tolerance=0.3)
+        result_arr = compare_image(image_to_check=None, known_names=None, known_face_encodings=known_encodings, tolerance=0.4)
 
         photos = Photo.objects.none() #empty queryset
         photos = list(photos)
