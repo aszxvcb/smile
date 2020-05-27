@@ -115,14 +115,14 @@ def detectphoto(request):
 
         result_arr = compare_image(image_to_check=None, known_names=None, known_face_encodings=known_encodings)
 
-        photos = Photo.objects.filter(image='') #empty queryset
+        photos = Photo.objects.none() #empty queryset
         for result in result_arr:
             filename = result.split("/unknown")
 
             # 추출된 사진 띄우기
             photo = Photo.objects.all()
-            photo = photo.filter(image="unknown"+filename[-1]);
+            # file_path = "`"+"unknown"+ filename[-1]+"`"
+            photo = photo.filter(image="unknown"+ filename[-1]);
             photos = photos.union(photo)
-
         return render(request, 'selfie_gallery.html', {"username":curUser.username,"photos":photos})
     return redirect('gallery')
