@@ -6,37 +6,40 @@
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     </head>
 
     <body>
         <div class="container">
             <header class="blog-header py-3">
                 <div class="row flex-nowrap justify-content-between align-items-center">
-                    <div class="col-4 pt-1">
+                    {% comment %} <div class="col-4 pt-1" style="visibility:hidden;">
                         <a class="text-muted" href="#">about</a>
-                    </div>
+                    </div> {% endcomment %}
 
-                    <div class="col-4 text-center">
+                    <div class="col-12 text-center">
                         <a class="blog-header-logo text-dark" href="{% url 'home' %}">
                             <h1>Smile :)</h1>
                         </a>
-                    </div>
-                    
+                    </div>   
+                </div>
+
+                <div class="row flex-nowrap justify-content-between ">
                     {% if user.is_authenticated %}
-                        <div class="col-4 d-flex justify-content-end align-items-center">
-                            안녕하세요 &nbsp; <b>{{ user.get_short_name|default:user.username }}</b> &nbsp; 님!
-                            <a class="btn btn-sm btn-outline-secondary" href="javascript:{document.getElementById('logout').submit()}">Log out</a>
+                        <div class="col-12 d-flex justify-content-end align-items-center">
+                            안녕하세요 &nbsp; <b>{{ user.get_short_name|default:user.username }}</b> &nbsp; 님!&nbsp;&nbsp;
+                            <a class="btn btn-sm btn-outline-secondary" href="javascript:{document.getElementById('logout').submit()}">Log out</a>&nbsp;&nbsp;&nbsp;&nbsp;
                             <form id="logout" method="POST" action="{% url 'logout' %}">
                                 {% csrf_token %}
                                 <input type="hidden"/>
                             </form>
                         </div>
                     {% else %}
-                        <div class="col-4 d-flex justify-content-end align-items-center">
-                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'choose'%}">Log in</a>
-                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'signup'%}">Sign up</a>
+                        <div class="col-12 d-flex justify-content-end align-items-center">
+                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'choose'%}">Log in</a>&nbsp;
+                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'signup'%}">Sign up</a>&nbsp;&nbsp;&nbsp;&nbsp;
                         </div>
-                    {% endif %}
+                    {% endif %} 
                 </div>
             </header>
 
