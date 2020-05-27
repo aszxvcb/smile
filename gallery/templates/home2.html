@@ -3,7 +3,47 @@
 {% block content %}
         <div style="height:50px; visibility:hidden;"></div>
         <a href="{% url 'gallery' %}" class="btn btn-info btn-lg btn-block" role="button" aria-pressed="true">사진 다운받기</a>  
-        <a href="{% url 'newphoto'%}" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true">사진 올리기</a>
+        <a onclick="photo_upload();" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true">사진 올리기</a>
+
         <a href="{% url 'detectphoto' %}" class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">사진 검출/다운받기</a>  
-        <a href="{% url 'newselfie' %}" class="btn btn-dark btn-lg btn-block" role="button" aria-pressed="true">셀카 올리기</a>  
+        <a onclick="selfie_upload();" class="btn btn-dark btn-lg btn-block" role="button" aria-pressed="true">셀카 올리기</a>  
+
+        <script> function photo_upload() { document.getElementById("id_photo").click() } </script>
+        <script> function selfie_upload() { document.getElementById("id_selfie").click() } </script>
+
+        <div style="display:none;">
+            <form action="{% url 'newphoto'%}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden"/>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th><label for="id_photo">Image:</label></th>
+                            <td><input onchange="photoSelect()" type="file" name="image" accept="image/*" required="" id="id_photo"></td>
+                            <script> function photoSelect() { document.getElementById("photo_submit_btn").click(); } </script>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <input id="photo_submit_btn" type="submit" value="제출하기">
+            </form>
+        </div>
+ 
+        <div style="display:none;">
+            <form action="{% url 'newselfie'%}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrfmiddlewaretoken" value="WXgxw4fzXH2pTlXGj5d4gC4ZfCwoAXUrKZGeUojwZQV8rpS5oaZvUvhBNEFvVKFL">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th><label for="id_selfie">Image:</label></th>
+                            <td><input onchange="selfieSelect()" type="file" name="image" accept="image/*" required="" id="id_selfie"></td>
+                            <script> function selfieSelect() { document.getElementById("selfie_submit_btn").click(); } </script>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <input id="selfie_submit_btn" type="submit" value="제출하기">
+            </form>
+        </div>
+
 {% endblock %}
