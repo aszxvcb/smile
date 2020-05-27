@@ -7,6 +7,8 @@ from django.contrib.auth import get_user
 from faceApp.connect import connectionTest as connect
 from faceApp.face_recognition_cli import *
 
+from itertools import chain
+
 # Create your views here.
 def home(request):
     messages.info(request, "home 화면입니다")
@@ -113,16 +115,18 @@ def detectphoto(request):
             print(type(json_data['unknowns'][0]))
             known_encodings = np.array(json_data['unknowns'][0]['encodings'])
 
-        result_arr = compare_image(image_to_check=None, known_names=None, known_face_encodings=known_encodings)
+        result_arr = compare_image(image_to_check=None, known_names=None, known_face_encodings=known_encodings, tolerance=0.3)
 
         photos = Photo.objects.none() #empty queryset
+        photos = list(photos)
+
         for result in result_arr:
             filename = result.split("/unknown")
 
             # 추출된 사진 띄우기
             photo = Photo.objects.all()
-            # file_path = "`"+"unknown"+ filename[-1]+"`"
             photo = photo.filter(image="unknown"+ filename[-1]);
-            photos = photos.union(photo)
+            photos = list(chain(photos, photo))
+
         return render(request, 'selfie_gallery.html', {"username":curUser.username,"photos":photos})
     return redirect('gallery')

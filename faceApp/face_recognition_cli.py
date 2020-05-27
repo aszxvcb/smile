@@ -15,7 +15,7 @@ from collections import OrderedDict
 
 def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열에 저장
 
-    upload_name = upload_file;
+    upload_name = upload_file
 
     print("[check] upload_unknown_file : {}".format(upload_file));
 

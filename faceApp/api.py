@@ -204,8 +204,6 @@ def face_encodings(face_image, known_face_locations=None, num_jitters=1, model="
     """
     원래 num_jitters=1, small
 
-
-
     Given an image, return the 128-dimension face encoding for each face in the image.
 
     :param face_image: The image that contains one or more faces
