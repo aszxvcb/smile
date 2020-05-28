@@ -31,7 +31,8 @@
  
         <div style="display:none;">
             <form action="{% url 'newselfie'%}" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="csrfmiddlewaretoken" value="WXgxw4fzXH2pTlXGj5d4gC4ZfCwoAXUrKZGeUojwZQV8rpS5oaZvUvhBNEFvVKFL">
+                {% csrf_token %}
+                <input type="hidden">
                 <table>
                     <tbody>
                         <tr>
