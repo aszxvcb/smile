@@ -39,14 +39,15 @@ def photopost(request):
             #NOTE. save() 처리 과정 중 model.py/unique_file_name() 실행
             messages.info(request, "저장 성공!")
 
-            #NOTE. faceApp 구현 부
-            # (기존)upload_unknown_file(post.image, post.owner, 0);
-            # @params: 업로드 된 사진의 경로를 전달
-            # faceApp/face_recognition_cli 로 제어 이동
-            upload_unknown_file(post.image.file);
+            try:
+                upload_unknown_file(post.image.file);
+            except NotFoundFace as e:
+                print(e, post.image.file);
+                messages.error(request, "얼굴을 찾을 수 없습니다. 다시 시도해 주세요.")
+                #TODO. 인코딩이 제대로 되지 않았을 때 처리 로직 추가. (디비와 파일에 저장된 사진 다시 지우기 등등..)
+                return redirect('home');
 
             messages.info(request, "인코딩 성공!");
-
             return redirect('gallery')
     # 일반 요청시
     else :
@@ -78,8 +79,18 @@ def selfiepost(request):
             userSelfies = selfies.filter(owner_id=curUserId)
 
             # faceApp
-            selfie_upload_btn(post.image.file, post.owner);
-            messages.info(request, "셀피 업로드 성공!")
+            try:
+                selfie_upload_btn(post.image.file, post.owner);
+                messages.info(request, "셀피 업로드 성공!")
+
+            except MoreThanOneFaceFound as e:
+                print(e, post.image.file);
+                messages.error(request, "한명의 얼굴이 나오게 사진을 찍어주세요.")
+                return redirect('home');
+            except NotFoundFace as e:
+                print(e, post.image.file);
+                messages.error(request, "얼굴을 찾을 수 없습니다. 다시 시도해 주세요.")
+                return redirect('home');
 
             # 사진 검출 함수 호출, faceApp 결과 파일명 받아서 화면에 띄워주기
             return redirect('detectphoto')

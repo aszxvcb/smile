@@ -14,6 +14,12 @@ from PIL import Image, ExifTags
 
 import json
 from collections import OrderedDict
+
+from django.shortcuts import redirect
+
+from faceApp.exception_faceApp import *
+
+
 def rotation_photo(background_image):
     try:
         image = Image.open(background_image.name)
@@ -60,9 +66,9 @@ def upload_unknown_file(upload_file): #업로드된 파일들 검사 후 배열�
 
     if len(upload_encodings) == 0:
         upload_encodings = rotation_photo(upload_file)
+        # 얼굴 발견되지 않을 시 에러 프론트로 전달
         if len(upload_encodings) == 0:
-            click.echo("WARNING: No faces found in {}. Ignoring file.".format(upload_file))
-            #TODO. 얼굴 발견되지 않을 시 에러 프론트로 전달
+            raise NotFoundFace;
 
     print("[check] upload_encodings " , upload_encodings);
 
@@ -99,14 +105,16 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
 
     user_encodings = face_recognition.face_encodings(img)
 
-    if len(user_encodings) > 1:
-        click.echo("WARNING: More than one face found in {}. Only considering the first face.".format(selfie_file))
-        #TODO. 얼굴이 두개 이상 발견 시 에러 프론트로 전달
+    # image가 회전되어 있을 때 인코딩이 제대로 안될 수 있음. 사진을 회전시켜 다시 인코딩
     if len(user_encodings) == 0:
         user_encodings = rotation_photo(selfie_file)
-        if len(user_encodings) == 0:
-            click.echo("WARNING: No faces found in {}. Ignoring file.".format(selfie_file))
-        #TODO. 얼굴 발견되지 않을 시 에러 프론트로 전달
+
+    # 얼굴 발견되지 않을 시 에러 발생
+    if len(user_encodings) == 0:
+        raise NotFoundFace;
+    # 얼굴이 두개 이상 발견 시 에러 발생
+    if len(user_encodings) > 1:
+        raise MoreThanOneFaceFound;
 
     file_path="./media/known/" + user_id.username + "/known_encodings_save.json"
 
