@@ -8,17 +8,16 @@
     {% providers_media_js %}
 
     {% comment %} <h2>SMILE</h2> {% endcomment %}
-    <div style=" height:200px;"></div>
-    <div class="container" style="width:50%">
-        <a class="btn btn-danger btn-lg btn-block" href="{% url 'login' %}">Smile :) 로그인</a>
-        <br>
-        <a class="btn btn-secondary btn-lg btn-block" href="{% provider_login_url 'google' %}">구글 로그인</a>
-        <br>
-        <a class="btn btn-primary btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">페이스북 로그인</a>
-        <br>
-        <a class="btn btn-success btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">네이버 로그인</a>
-        <br>
-        <a class="btn btn-warning btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">카카오 로그인</a>
-    </div>
+    <div style=" height:15vh;"></div>
+
+    <a class="btn btn-danger btn-lg btn-block" href="{% url 'login' %}">Smile :) 로그인</a>
+    <br>
+    <a class="btn btn-secondary btn-lg btn-block" href="{% provider_login_url 'google' %}">구글 로그인</a>
+    <br>
+    <a class="btn btn-primary btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">페이스북 로그인</a>
+    <br>
+    <a class="btn btn-success btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">네이버 로그인</a>
+    <br>
+    <a class="btn btn-warning btn-lg btn-block" href="{% provider_login_url 'google' %}" onclick="return false">카카오 로그인</a>
 
 {% endblock %}
