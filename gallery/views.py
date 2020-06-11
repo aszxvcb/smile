@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Photo, Selfie
-from .forms import PhotoPost, SelfiePost
+from .forms import PhotoPost, SelfiePost, PhotosPost
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import get_user
@@ -28,30 +28,33 @@ def photopost(request):
 
     # 사진 전송 버튼 클릭 시 동작하는 부분
     if request.method == 'POST':
-        form = PhotoPost(request.POST, request.FILES)
-        # print(form.is_valid())
-        # 사진 업로드 구현부
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.created_date = timezone.now()
-            post.owner = request.user
-            post.save()
-            #NOTE. save() 처리 과정 중 model.py/unique_file_name() 실행
-            messages.info(request, "저장 성공!")
+        for _file in request.FILES.getlist('image'):
+            request.FILES['image'] = _file
 
-            try:
-                upload_unknown_file(post.image.file);
-            except NotFoundFace as e:
-                print(e, post.image.file);
-                messages.error(request, "얼굴을 찾을 수 없습니다. 다시 시도해 주세요.")
-                #TODO. 인코딩이 제대로 되지 않았을 때 처리 로직 추가. (디비와 파일에 저장된 사진 다시 지우기 등등..)
-                return redirect('home');
+            form = PhotosPost(request.POST, request.FILES)
+            # print(form.is_valid())
+            # 사진 업로드 구현부
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.created_date = timezone.now()
+                post.owner = request.user
+                #NOTE. save() 처리 과정 중 model.py/unique_file_name() 실행
+                post.save()
+                form.save_m2m()
 
-            messages.info(request, "인코딩 성공!");
-            return redirect('gallery')
+                try:
+                    upload_unknown_file(post.image.file);
+                except NotFoundFace as e:
+                    print(e, post.image.file);
+                    messages.error(request, "얼굴을 찾을 수 없습니다. 다시 시도해 주세요.")
+                    #TODO. 인코딩이 제대로 되지 않았을 때 처리 로직 추가. (디비와 파일에 저장된 사진 다시 지우기 등등..)
+                    return redirect('home');
+        messages.info(request, "저장 성공!")    
+        messages.info(request, "인코딩 성공!");
+        return redirect('gallery')
     # 일반 요청시
     else :
-        form = PhotoPost()
+        form = PhotosPost()
         return render(request, 'new.html', {"form": form})
 
 #NOTE. 셀피 업로드 시 동작하는 함수

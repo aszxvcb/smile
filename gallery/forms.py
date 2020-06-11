@@ -12,3 +12,10 @@ class SelfiePost(forms.ModelForm):
     class Meta:
         model = Selfie
         fields = ['image']
+
+
+class PhotosPost(forms.ModelForm):
+    image = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True})) 
+    class Meta:
+        model = Photo
+        fields = ['image']
