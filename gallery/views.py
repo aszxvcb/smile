@@ -14,7 +14,8 @@ def home(request):
     return render(request, 'home2.html')
 
 def gallery(request):
-    photos = Photo.objects
+    photos = Photo.objects;
+    photos = photos.order_by('-created_date');
     return render(request, 'gallery.html', {"photos": photos})
 
 #NOTE. 사진 전송 시 동작하는 함수
@@ -138,6 +139,7 @@ def detectphoto(request):
 
             # 추출된 사진 띄우기
             photo = Photo.objects.all()
+            photo = photo.order_by('-created_date');
             photo = photo.filter(image="unknown"+ filename[-1]);
             photos = list(chain(photos, photo))
 

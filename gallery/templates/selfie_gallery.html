@@ -4,7 +4,7 @@
 
     <div class="album py-5 bg-light">
         <div class="container" style="background-color:#f8f9fa">
-            <h3>입력한 selfie를 바탕으로 사진을 검출했습니다.</h3>
+            <h3>Get your photo!</h3>
             <div class="row">
             {% for photo in photos %}
                 {% if photo.image %}
@@ -14,9 +14,9 @@
                         <div class="card-body">
                             <h6>created: {{ photo.created_date }}</h6>
                             <p class="card-text"> {{ photo.owner.username }}</p>
-                            <p class="card-text"> {{ photo.image.url }}</p>
-                            <p class="card-text"> instance : {{ photo.image.instance }}</p>
-                            <p class="card-text"> {{ photo.image.name }}</p>
+<!--                            <p class="card-text"> {{ photo.image.url }}</p>-->
+<!--                            <p class="card-text"> instance : {{ photo.image.instance }}</p>-->
+<!--                            <p class="card-text"> {{ photo.image.name }}</p>-->
 
                         </div>
                     </div>

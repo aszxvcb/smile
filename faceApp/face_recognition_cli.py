@@ -103,6 +103,7 @@ def selfie_upload_btn(selfie_file, user_id): # 유저의 셀피를 올려 자신
         pil_img.thumbnail((1600, 1600), PIL.Image.LANCZOS)  # 크기 줄임
         img = np.array(pil_img)
 
+    # 인코딩 - 특징점 추출
     user_encodings = face_recognition.face_encodings(img)
 
     # image가 회전되어 있을 때 인코딩이 제대로 안될 수 있음. 사진을 회전시켜 다시 인코딩
